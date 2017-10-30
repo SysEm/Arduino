@@ -1,6 +1,6 @@
 /*
    Verificacion de presion en un servo
-*/
+ */
 #include <Servo.h>
 // SERVO:
 Servo servo; // Definimos un objeto servo a controlar desde la Raspi
@@ -27,31 +27,34 @@ float r2 = 10000; // valor en ohms de la segunda resistencia
 
 // Tensiones del servo:
 // Pata PWM:
-float vEst = 1.6613;
-float vForce = 1.7;
+//float vEst = 1.6;
+float vEst = 0;
+float vForce = 1.8;
 
 // Timestamps
-const long intervaloServo = 20;
-const long intervaloVolt = 20;
+const long intervaloServo = 320;
+const long intervaloVolt = 330;
 unsigned long int millisAnteriores = 0;
 unsigned long int millisAnterioresVolt = 0;
 
 void accionarServo(char signal) {
   unsigned long millisActuales = millis(); // Momento actual
   /* Veo si el tiempo transcurrido aplica segun el intervalo tomado
-     para que el Servo cambie de estado
-  */
+   para que el Servo cambie de estado
+   */
   if (millisActuales - millisAnteriores >= intervaloServo) {
     millisAnteriores = millisActuales; // Guardo el estado actual como anterior para la proxima medicion
 
     if (posicion == cerrado && signal == 'A') {
       servo.write(abierto);
       posicion = abierto;
+      forzado = 0;
       Serial.println("ABIERTO");
     }
     else if (posicion == abierto && signal == 'A') {
       servo.write(cerrado);
       posicion = cerrado;
+      forzado = 0;
       Serial.println("CERRADO");
     }
   }
@@ -62,44 +65,32 @@ void verificarForzado() {
 
   unsigned long millisActuales = millis(); // Momento actual
   /* Veo si el tiempo transcurrido aplica segun el intervalo tomado
-     para que el Servo cambie de estado
-  */
+   para que el Servo cambie de estado
+   */
   if (millisActuales - millisAnterioresVolt >= intervaloVolt) {
     millisAnterioresVolt = millisActuales;
 
     int valorMedido = analogRead(A0);
 
     // Convierto la lectura (de 0 a 1023) a voltaje (0 a 5V):
-   float voltajeMedido = valorMedido * (vArduino / 1023);
-//    Serial.print("Voltaje medido: ");
-//    // Imprimo el valor medido:
-//    Serial.println(voltajeMedido,4);
+    float voltajeMedido = valorMedido * (vArduino / 1023);
 
-    if (voltajeMedido > vEst &&  voltajeMedido <= vForce && forzado == 0 ) {
-//    if (voltajeMedido > vEst &&  voltajeMedido <= vForce) {
+    // Imprimo el valor medido:
+    //Serial.print("Voltaje medido: ");
+    //Serial.println(voltajeMedido,4);
+
+    if (voltajeMedido > vEst &&  voltajeMedido <= vForce) {
       forzado = 1;
+      //estacionario = 0;
       estadoAnterior = estacionario;
       Serial.println("FORZADO");
     }
-    else 
-      if (voltajeMedido <= vEst &&  voltajeMedido < vForce && forzado == 1) {
+    if (voltajeMedido <= vEst) {
       forzado = 0;
+      //estacionario = 1;
       estadoAnterior = forzado;
       Serial.println("ESTACIONARIO");
     }
-
-    //    if (vInput == vEst && vForce != 0) {
-    //      vForce = 0;
-    //      Serial.println("ESTACIONARIO (cerrado)");
-    //    }
-    //    if (vInput > vEst && vForce == 0) {
-    //      vForce = 1;
-    //      Serial.println("FORZADO");
-    //    }
-    //    if (vInput > vEst && vForce == 0) {
-    //      vForce = 1;
-    //      Serial.println("ABIERTO");
-    //    }
   }
 }
 
@@ -120,6 +111,10 @@ void setup() {
   Serial.print("Inicializando servo, posicion incial CERRADO, angulo: ");
   Serial.println(posicion);
 
+  // Medicion inicial de la tension estacionaria
+  vEst = analogRead(A0) * (vArduino / 1023);
+  Serial.println(posicion);
+
 }
 
 void loop() {
@@ -130,7 +125,8 @@ void loop() {
     accionarServo(sigRecibida);
   }
 
-  //accionoServo(posInicial);
   verificarForzado();
 
 }
+
+
