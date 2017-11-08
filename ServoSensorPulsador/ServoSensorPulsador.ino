@@ -27,13 +27,13 @@ float r2 = 10000; // valor en ohms de la segunda resistencia
 
 // Tensiones del servo:
 // Pata PWM:
-//float vEst = 1.6;
-float vEst = 0;
-float vForce = 1.8;
+//float vEst = 3.1;
+float vEst;
+float vForce = 1.6;
 
 // Timestamps
 const long intervaloServo = 320;
-const long intervaloVolt = 330;
+const long intervaloVolt = 320;
 unsigned long int millisAnteriores = 0;
 unsigned long int millisAnterioresVolt = 0;
 
@@ -79,13 +79,13 @@ void verificarForzado() {
     //Serial.print("Voltaje medido: ");
     //Serial.println(voltajeMedido,4);
 
-    if (voltajeMedido > vEst &&  voltajeMedido <= vForce) {
+    if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0) {
       forzado = 1;
       //estacionario = 0;
       estadoAnterior = estacionario;
       Serial.println("FORZADO");
     }
-    if (voltajeMedido <= vEst) {
+    if (voltajeMedido >= vEst && forzado != 0) {
       forzado = 0;
       //estacionario = 1;
       estadoAnterior = forzado;
