@@ -8,7 +8,7 @@ Servo servo; // Definimos un objeto servo a controlar desde la Raspi
 // Variables del servo
 const int servoPin = 9; // El servo conectará en el pin 9 (PWM)
 const int cerrado = 90; // Cerrado: Servo a 90 grados (Posicion inicial)
-const int abierto = 0; // Abierto: Servo a 0 grados
+const int abierto = 180; // Abierto: Servo a 0 grados
 
 // Historico de posiciones
 int posInicial = cerrado;
