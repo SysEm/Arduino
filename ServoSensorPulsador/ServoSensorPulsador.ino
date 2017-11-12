@@ -22,18 +22,17 @@ unsigned int estadoAnterior = estacionario;
 
 // VOLTIMETRO:
 float vArduino = 3.3; // Cuando esta alimentado por USB la salida de 5V solo llega a 3.3V
-float r1 = 100000; // valor en ohms de la primer resistencia
-float r2 = 10000; // valor en ohms de la segunda resistencia
+float vFuente = 3.3;
 
 // Tensiones del servo:
 // Pata PWM:
 //float vEst = 3.1;
 float vEst;
-float vForce = 1.6;
+float vForce = 2.7; // 2.5975
 
 // Timestamps
-const long intervaloServo = 320;
-const long intervaloVolt = 320;
+const long intervaloServo = 20;
+const long intervaloVolt = 200;
 unsigned long int millisAnteriores = 0;
 unsigned long int millisAnterioresVolt = 0;
 
@@ -73,21 +72,19 @@ void verificarForzado() {
     int valorMedido = analogRead(A0);
 
     // Convierto la lectura (de 0 a 1023) a voltaje (0 a 5V):
-    float voltajeMedido = valorMedido * (vArduino / 1023);
+    float voltajeMedido = valorMedido * (vEst / 1023);
 
     // Imprimo el valor medido:
-    //Serial.print("Voltaje medido: ");
-    //Serial.println(voltajeMedido,4);
+    Serial.print("Voltaje medido: ");
+    Serial.println(voltajeMedido,4);
 
-    if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0) {
+    if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0 && posicion != abierto ) {
       forzado = 1;
-      //estacionario = 0;
       estadoAnterior = estacionario;
       Serial.println("FORZADO");
     }
-    if (voltajeMedido >= vEst && forzado != 0) {
+    if (voltajeMedido > vForce && forzado != 0 ) {
       forzado = 0;
-      //estacionario = 1;
       estadoAnterior = forzado;
       Serial.println("ESTACIONARIO");
     }
@@ -112,8 +109,8 @@ void setup() {
   Serial.println(posicion);
 
   // Medicion inicial de la tension estacionaria
-  vEst = analogRead(A0) * (vArduino / 1023);
-  Serial.println(posicion);
+  vEst = analogRead(A0) * (vFuente / 1023);
+  //Serial.println(posicion);
 
 }
 
