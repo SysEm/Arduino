@@ -75,15 +75,16 @@ void verificarForzado() {
     float voltajeMedido = valorMedido * (vEst / 1023);
 
     // Imprimo el valor medido:
-    Serial.print("Voltaje medido: ");
-    Serial.println(voltajeMedido,4);
+    //Serial.print("Voltaje medido: ");
+    //Serial.println(voltajeMedido,4);
 
-    if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0 && posicion != abierto ) {
+    //if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0 && posicion != abierto ) {
+    if (voltajeMedido < vEst &&  voltajeMedido <= vForce ) {
       forzado = 1;
       estadoAnterior = estacionario;
       Serial.println("FORZADO");
     }
-    if (voltajeMedido > vForce && forzado != 0 ) {
+    if (voltajeMedido > vForce) {
       forzado = 0;
       estadoAnterior = forzado;
       Serial.println("ESTACIONARIO");
