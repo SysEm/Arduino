@@ -28,7 +28,7 @@ float vFuente = 3.3;
 // Pata PWM:
 //float vEst = 3.1;
 float vEst;
-float vForce = 2.7; // 2.5975
+float vForce = 2.9999; // 2.5975
 
 // Timestamps
 const long intervaloServo = 20;
@@ -75,8 +75,8 @@ void verificarForzado() {
     float voltajeMedido = valorMedido * (vEst / 1023);
 
     // Imprimo el valor medido:
-    //Serial.print("Voltaje medido: ");
-    //Serial.println(voltajeMedido,4);
+    // Serial.print("Voltaje medido: ");
+    // Serial.println(voltajeMedido,4);
 
     //if (voltajeMedido < vEst &&  voltajeMedido <= vForce && forzado == 0 && posicion != abierto ) {
     if (voltajeMedido < vEst &&  voltajeMedido <= vForce ) {
